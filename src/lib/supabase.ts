@@ -1,10 +1,14 @@
 import { createClient } from '@supabase/supabase-js'
 import type { Package, AttendanceRecord } from '../types'
 
-export const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL as string,
-  import.meta.env.VITE_SUPABASE_ANON_KEY as string,
-)
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string
+
+export const supabaseConfigured = Boolean(supabaseUrl && supabaseKey)
+
+export const supabase = supabaseConfigured
+  ? createClient(supabaseUrl, supabaseKey)
+  : null!
 
 // ── Row mappers ──────────────────────────────────────────────────────────────
 
