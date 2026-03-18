@@ -24,8 +24,15 @@ export function AuthGate({ children }: { children: ReactNode }) {
   const [errorMsg, setErrorMsg] = useState('')
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => setSession(data.session))
+    // Fallback: if session check takes > 6s, drop to login screen
+    const timeout = setTimeout(() => setSession(null), 6000)
+    supabase.auth.getSession()
+      .then(({ data }) => setSession(data.session ?? null))
+      .catch(() => setSession(null))
+      .finally(() => clearTimeout(timeout))
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, s) => {
+      clearTimeout(timeout)
       setSession(s)
     })
     return () => subscription.unsubscribe()
