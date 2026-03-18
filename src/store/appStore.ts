@@ -1,10 +1,10 @@
 import { create } from 'zustand'
 import type { Package, AttendanceRecord, Currency, ExchangeRateCache } from '../types'
 import {
-  dbGetPackages, dbPutPackage, dbDeletePackage,
-  dbGetAttendance, dbPutAttendance, dbDeleteAttendance,
-  dbGetSetting, dbSetSetting,
-} from '../db/idb'
+  sbGetPackages, sbPutPackage, sbDeletePackage,
+  sbGetAttendance, sbPutAttendance, sbDeleteAttendance,
+} from '../lib/supabase'
+import { dbGetSetting, dbSetSetting } from '../db/idb'
 import { loadRates, FALLBACK_RATES } from '../lib/currency'
 
 interface AppState {
@@ -18,7 +18,7 @@ interface AppState {
   // Modal state
   isFormOpen: boolean
   editingPackage: Package | null
-  activePackageId: string | null  // for the detail slide-up
+  activePackageId: string | null
 
   // Actions
   init(): Promise<void>
@@ -66,8 +66,8 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   async init() {
     const [pkgs, att, currency, rates] = await Promise.all([
-      dbGetPackages(),
-      dbGetAttendance(),
+      sbGetPackages(),
+      sbGetAttendance(),
       dbGetSetting<Currency>('displayCurrency'),
       loadRates(),
     ])
@@ -88,7 +88,7 @@ export const useAppStore = create<AppState>((set, get) => ({
       updatedAt: Date.now(),
       archivedAt: null,
     }
-    await dbPutPackage(pkg)
+    await sbPutPackage(pkg)
     set(s => ({ packages: [pkg, ...s.packages] }))
   },
 
@@ -96,7 +96,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     const pkg = get().packages.find(p => p.id === id)
     if (!pkg) return
     const updated = { ...pkg, ...patch, updatedAt: Date.now() }
-    await dbPutPackage(updated)
+    await sbPutPackage(updated)
     set(s => ({ packages: s.packages.map(p => p.id === id ? updated : p) }))
   },
 
@@ -105,7 +105,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 
   async deletePackage(id) {
-    await dbDeletePackage(id)
+    await sbDeletePackage(id)
     set(s => ({
       packages: s.packages.filter(p => p.id !== id),
       attendance: s.attendance.filter(a => a.packageId !== id),
@@ -120,9 +120,8 @@ export const useAppStore = create<AppState>((set, get) => ({
       attendedAt: Date.now(),
       note: null,
     }
-    await dbPutAttendance(record)
+    await sbPutAttendance(record)
     set(s => ({ attendance: [record, ...s.attendance] }))
-    // vibrate
     if ('vibrate' in navigator) navigator.vibrate(40)
     return record
   },
@@ -134,7 +133,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
 
   async deleteAttendance(id) {
-    await dbDeleteAttendance(id)
+    await sbDeleteAttendance(id)
     set(s => ({ attendance: s.attendance.filter(a => a.id !== id) }))
   },
 

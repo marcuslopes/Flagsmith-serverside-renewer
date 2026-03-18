@@ -4,8 +4,9 @@ import { useAppStore } from './store/appStore'
 import { PackageList } from './components/PackageList'
 import { PackageDetail } from './components/PackageDetail'
 import { PackageForm } from './components/PackageForm'
+import { AuthGate } from './components/AuthGate'
 
-export default function App() {
+function AppInner() {
   const init = useAppStore(s => s.init)
 
   useEffect(() => {
@@ -34,5 +35,13 @@ export default function App() {
         }}
       />
     </>
+  )
+}
+
+export default function App() {
+  return (
+    <AuthGate>
+      <AppInner />
+    </AuthGate>
   )
 }

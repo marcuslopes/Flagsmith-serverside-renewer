@@ -26,7 +26,7 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-html, body, #root {
+html, body {
   height: 100%;
   width: 100%;
   margin: 0;
@@ -40,15 +40,27 @@ body {
   -webkit-font-smoothing: antialiased;
   overscroll-behavior: none;
   overflow: hidden;
+  /* Prevent text selection on tap */
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Allow text selection inside inputs and text areas */
+input, textarea, [contenteditable] {
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 #root {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  /* svh = stable viewport height — doesn't resize when mobile browser chrome shows/hides */
+  height: 100vh; /* fallback for older browsers */
+  height: 100svh;
   max-width: 430px;
   margin: 0 auto;
   position: relative;
+  overflow: hidden;
 }
 
 /* Scrollable content areas */

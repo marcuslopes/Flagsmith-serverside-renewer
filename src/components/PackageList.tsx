@@ -105,8 +105,7 @@ export function PackageList() {
         style={{
           position: 'fixed',
           bottom: `max(24px, var(--safe-bottom))`,
-          right: '50%',
-          transform: 'translateX(calc(50% + 8px)) translateX(min(193px, 47vw))',
+          right: 24,
           width: 58, height: 58,
           borderRadius: '50%', border: 'none',
           background: 'linear-gradient(135deg, var(--accent), #6d28d9)',
@@ -116,10 +115,10 @@ export function PackageList() {
           zIndex: 30,
           transition: 'transform 150ms ease, box-shadow 150ms ease',
         }}
-        onMouseDown={e => { e.currentTarget.style.transform = 'translateX(calc(50% + 8px)) translateX(min(193px, 47vw)) scale(0.92)' }}
-        onMouseUp={e => { e.currentTarget.style.transform = 'translateX(calc(50% + 8px)) translateX(min(193px, 47vw)) scale(1)' }}
-        onTouchStart={e => { e.currentTarget.style.transform = 'translateX(calc(50% + 8px)) translateX(min(193px, 47vw)) scale(0.92)' }}
-        onTouchEnd={e => { e.currentTarget.style.transform = 'translateX(calc(50% + 8px)) translateX(min(193px, 47vw)) scale(1)' }}
+        onMouseDown={e => { e.currentTarget.style.transform = 'scale(0.92)' }}
+        onMouseUp={e => { e.currentTarget.style.transform = 'scale(1)' }}
+        onTouchStart={e => { e.currentTarget.style.transform = 'scale(0.92)' }}
+        onTouchEnd={e => { e.currentTarget.style.transform = 'scale(1)' }}
         aria-label="Add package"
       >
         <Plus size={28} strokeWidth={2.5} />
