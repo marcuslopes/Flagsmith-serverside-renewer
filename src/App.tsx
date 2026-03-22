@@ -30,7 +30,9 @@ function AppInner() {
   const init = useAppStore(s => s.init)
 
   useEffect(() => {
-    init()
+    init().catch(err => {
+      console.error('init failed:', err)
+    })
   }, [init])
 
   return (

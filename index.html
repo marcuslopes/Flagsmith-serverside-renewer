@@ -16,21 +16,26 @@
   <body>
     <div id="root"></div>
     <script>
-      // Show any JS error on-screen — useful when mobile DevTools aren't available
+      // Show errors on-screen only if React hasn't mounted yet (root is still empty)
+      function showErr(title, detail) {
+        var root = document.getElementById('root')
+        if (root && root.childElementCount === 0) {
+          root.innerHTML =
+            '<div style="padding:20px;color:#f87171;font-family:monospace;font-size:13px;word-break:break-word;background:#0a0a0f;min-height:100vh">' +
+            '<div style="font-size:24px;margin-bottom:12px">' + title + '</div>' +
+            '<pre style="white-space:pre-wrap">' + detail + '</pre>' +
+            '</div>'
+        } else {
+          console.error(title, detail)
+        }
+      }
       window.onerror = function(msg, src, line, col, err) {
-        document.getElementById('root').innerHTML =
-          '<div style="padding:20px;color:#f87171;font-family:monospace;font-size:13px;word-break:break-word">' +
-          '<div style="font-size:24px;margin-bottom:12px">💥 JS load error</div>' +
-          '<b>' + msg + '</b><br><br>' + src + ' ' + line + ':' + col +
-          (err ? '<br><br><pre style="white-space:pre-wrap;opacity:.7">' + err.stack + '</pre>' : '') +
-          '</div>'
+        showErr('💥 JS error', msg + '\n' + src + ' ' + line + ':' + col + (err ? '\n' + err.stack : ''))
       }
       window.onunhandledrejection = function(e) {
-        document.getElementById('root').innerHTML =
-          '<div style="padding:20px;color:#f87171;font-family:monospace;font-size:13px;word-break:break-word">' +
-          '<div style="font-size:24px;margin-bottom:12px">💥 Unhandled promise</div>' +
-          '<b>' + String(e.reason) + '</b>' +
-          '</div>'
+        var r = e.reason
+        var detail = r instanceof Error ? r.stack : JSON.stringify(r, null, 2) || String(r)
+        showErr('💥 Unhandled promise', detail)
       }
     </script>
     <script type="module" src="/src/main.tsx"></script>
