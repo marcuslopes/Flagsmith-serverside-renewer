@@ -15,6 +15,24 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      // Show any JS error on-screen — useful when mobile DevTools aren't available
+      window.onerror = function(msg, src, line, col, err) {
+        document.getElementById('root').innerHTML =
+          '<div style="padding:20px;color:#f87171;font-family:monospace;font-size:13px;word-break:break-word">' +
+          '<div style="font-size:24px;margin-bottom:12px">💥 JS load error</div>' +
+          '<b>' + msg + '</b><br><br>' + src + ' ' + line + ':' + col +
+          (err ? '<br><br><pre style="white-space:pre-wrap;opacity:.7">' + err.stack + '</pre>' : '') +
+          '</div>'
+      }
+      window.onunhandledrejection = function(e) {
+        document.getElementById('root').innerHTML =
+          '<div style="padding:20px;color:#f87171;font-family:monospace;font-size:13px;word-break:break-word">' +
+          '<div style="font-size:24px;margin-bottom:12px">💥 Unhandled promise</div>' +
+          '<b>' + String(e.reason) + '</b>' +
+          '</div>'
+      }
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
